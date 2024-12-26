@@ -9,7 +9,9 @@ const app = express();
 require("dotenv").config();
 
 const UserRoutes = require("./routes/UserRoutes");
+const ProductRoutes = require("./routes/ProductRoutes");
 const AuthRoutes = require("./routes/AuthRoutes");
+const FileRoutes = require("./routes/FileRoutes");
 const { authMiddleware } = require("./middleware/authMiddleware");
 
 app.use(cookieParser());
@@ -26,6 +28,7 @@ app.use(
 		credentials: true, // This is important to allow cookies to be sent
 	})
 );
+// app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -47,6 +50,8 @@ app.use("/ping", (req, res) => {
 
 app.use("/api/auth", AuthRoutes);
 app.use("/api/user", authMiddleware, UserRoutes);
+app.use("/api/product", ProductRoutes);
+app.use("/file", FileRoutes);
 
 // 404 For Rest
 app.all("*", (req, res, next) => {

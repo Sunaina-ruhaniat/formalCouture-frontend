@@ -22,3 +22,23 @@ exports.authMiddleware = async (req, res, next) => {
 		return res.status(401).json({ message: "Please authenticate" });
 	}
 };
+
+exports.adminMiddleware = (req, res, next) => {
+	try {
+		// Ensure the user is authenticated first
+		if (!req.user) {
+			return res.status(401).json({ message: "Please authenticate" });
+		}
+
+		// Check if the user has the admin role
+		if (req.user.role !== "admin") {
+			return res.status(403).json({ message: "Access denied. Admins only." });
+		}
+
+		// User is an admin
+		next();
+	} catch (error) {
+		console.error(error);
+		return res.status(403).json({ message: "Access denied. Admins only." });
+	}
+};

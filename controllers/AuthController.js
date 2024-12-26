@@ -5,6 +5,7 @@ const User = require("../models/UserModel");
 exports.register = async (req, res) => {
 	try {
 		const data = req.body;
+		data.role = "customer";
 		const user = await User.create(data);
 		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 		await user.save();
@@ -24,7 +25,9 @@ exports.register = async (req, res) => {
 			.json({ message: "Registered successfully", user: user });
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({ error: error, message: error?.message });
+		return res
+			.status(500)
+			.json({ error: error.message, message: "Error Registering User" });
 	}
 };
 
@@ -48,6 +51,8 @@ exports.login = async (req, res) => {
 		return res.status(200).json({ message: "Login Successful", user });
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({ error: error, message: error?.message });
+		return res
+			.status(500)
+			.json({ error: error?.message, message: "Error in User Login" });
 	}
 };

@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Cart",
 		},
+		role: {
+			type: String,
+			enum: ["customer", "admin"],
+			default: "customer",
+		},
 	},
 	{
 		timestamps: true,
