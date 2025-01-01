@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/UserModel");
+const CartController = require("../controllers/CartController");
 
 exports.register = async (req, res) => {
 	try {
@@ -16,6 +17,9 @@ exports.register = async (req, res) => {
 			secure: false, // Set to true if using HTTPS
 			sameSite: true, // if in localhost not then "none"
 		});
+
+		// Merge the session cart with the user's cart
+		await CartController.mergeCart(req, res, user);
 
 		// const userWithoutPassword = user.toObject();
 		// delete userWithoutPassword.password;
@@ -47,6 +51,9 @@ exports.login = async (req, res) => {
 			secure: false, // Set to true if using HTTPS
 			sameSite: true, // if in localhost not then "none"
 		});
+
+		// Merge the session cart with the user's cart
+		await CartController.mergeCart(req, res, user);
 
 		return res.status(200).json({ message: "Login Successful", user });
 	} catch (error) {

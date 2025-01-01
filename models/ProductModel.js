@@ -3,6 +3,12 @@ const Review = require("./ReviewModel");
 
 const productSchema = new mongoose.Schema(
 	{
+		productCode: {
+			type: String,
+			required: [true, "Product code is required"],
+			trim: true,
+			unique: true,
+		},
 		name: {
 			type: String,
 			required: [true, "Product name is required"],
@@ -25,8 +31,14 @@ const productSchema = new mongoose.Schema(
 		],
 		category: {
 			type: String,
-			required: [true, "Product category is required"],
-			enum: ["electronics", "fashion", "home", "beauty", "sports", "other"],
+			trim: true,
+			default: "normal",
+			enum: [
+				"normal",
+				"limited-edition",
+				"evergreen-classic",
+				"most-loved-style",
+			],
 		},
 		brand: {
 			type: String,
@@ -39,17 +51,22 @@ const productSchema = new mongoose.Schema(
 			min: [0, "Stock must be a non-negative number"],
 			default: 0,
 		},
-		variants: [
+		sizes: [
 			{
-				type: {
-					type: String,
-					required: [true, "Variant type is required"],
-				},
-				values: [
-					{
-						type: String, // Example: "Red", "Blue", "S", "M", "L"
-					},
-				],
+				type: String,
+				trim: true, // Example: "S", "M", "L", "XL"
+			},
+		],
+		colors: [
+			{
+				type: String,
+				trim: true, // Example: "Red", "Blue", "Green"
+			},
+		],
+		fits: [
+			{
+				type: String,
+				trim: true, // Example: "Slim", "Regular", "Relaxed"
 			},
 		],
 		averageRating: {

@@ -25,6 +25,7 @@ const cartSchema = new mongoose.Schema(
 				variant: {
 					type: Object,
 					default: {},
+					// {size:"S",color:"Red",fit:"Slim"}
 				},
 			},
 		],

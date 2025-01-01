@@ -4,8 +4,18 @@ const multer = require("multer");
 // Controller for creating a product
 exports.createProduct = async (req, res) => {
 	try {
-		const { name, description, price, category, brand, stock, variants } =
-			req.body;
+		const {
+			productCode,
+			name,
+			description,
+			price,
+			category,
+			brand,
+			stock,
+			sizes,
+			colors,
+			fits,
+		} = req.body;
 
 		// Array to store image references
 		let imageUrls = [];
@@ -19,13 +29,16 @@ exports.createProduct = async (req, res) => {
 			}
 		}
 		const product = await Product.create({
+			productCode,
 			name,
 			description,
 			price,
 			category,
 			brand,
 			stock,
-			variants: JSON.parse(variants || "[]"),
+			sizes: JSON.parse(sizes || "[]"), // Convert sizes string to array
+			colors: JSON.parse(colors || "[]"), // Convert colors string to array
+			fits: JSON.parse(fits || "[]"), // Convert sizes string to array
 			images: imageUrls,
 		});
 
@@ -39,12 +52,35 @@ exports.createProduct = async (req, res) => {
 // Controller for getting all products (paginated)
 exports.getProducts = async (req, res) => {
 	try {
-		const { page = 1, limit = 10, category, brand } = req.query;
+		const {
+			page = 1,
+			limit = 20,
+			category,
+			brand,
+			color,
+			fit,
+			size,
+			search,
+		} = req.query;
 
 		const filters = {};
 		if (category) filters.category = category;
 		if (brand) filters.brand = brand;
 
+		// Check for array filters and use the $in operator to match any element in the array
+		if (color) filters.colors = { $in: [color] }; // Match if color is in the colors array
+		if (fit) filters.fits = { $in: [fit] }; // Match if fit is in the fits array
+		if (size) filters.sizes = { $in: [size] }; // Match if size is in the sizes array
+
+		// Add search for name
+		if (search) {
+			filters.$or = [
+				{ name: { $regex: search, $options: "i" } }, // Case-insensitive search in name
+				{ productCode: { $regex: search, $options: "i" } }, // Case-insensitive search in productCode
+				{ description: { $regex: search, $options: "i" } }, // Case-insensitive search in description
+			];
+		}
+		console.log(filters);
 		const products = await Product.find(filters)
 			.skip((page - 1) * limit)
 			.limit(parseInt(limit))
@@ -89,7 +125,9 @@ exports.updateProduct = async (req, res) => {
 			category,
 			brand,
 			stock,
-			variants,
+			sizes,
+			colors,
+			fits,
 			removeImages,
 		} = req.body;
 
@@ -120,7 +158,9 @@ exports.updateProduct = async (req, res) => {
 		product.category = category || product.category;
 		product.brand = brand || product.brand;
 		product.stock = stock || product.stock;
-		product.variants = JSON.parse(variants || "[]");
+		product.sizes = JSON.parse(sizes || "[]") || product.sizes;
+		product.colors = JSON.parse(colors || "[]") || product.colors;
+		product.fits = JSON.parse(fits || "[]") || product.fits;
 		product.images = imageUrls;
 
 		await product.save();

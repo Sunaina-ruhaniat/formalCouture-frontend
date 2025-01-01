@@ -7,9 +7,11 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const app = express();
 require("dotenv").config();
+const session = require("express-session");
 
 const UserRoutes = require("./routes/UserRoutes");
 const ProductRoutes = require("./routes/ProductRoutes");
+const CartRoutes = require("./routes/CartRoutes");
 const AuthRoutes = require("./routes/AuthRoutes");
 const FileRoutes = require("./routes/FileRoutes");
 const { authMiddleware } = require("./middleware/authMiddleware");
@@ -32,6 +34,15 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(
+	session({
+		secret: process.env.SESSION_SECRET, // Replace with a secure key
+		resave: false, // Avoid resaving session if unmodified
+		saveUninitialized: false, // Avoid saving empty sessions
+		cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // Use secure : true in https
+	})
+);
+
 mongoose
 	.connect(process.env.MONGODB_URI, {
 		dbName: process.env.DB_NAME,
@@ -51,6 +62,7 @@ app.use("/ping", (req, res) => {
 app.use("/api/auth", AuthRoutes);
 app.use("/api/user", authMiddleware, UserRoutes);
 app.use("/api/product", ProductRoutes);
+app.use("/api/cart", CartRoutes);
 app.use("/file", FileRoutes);
 
 // 404 For Rest
