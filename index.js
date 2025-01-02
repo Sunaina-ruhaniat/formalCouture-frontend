@@ -8,10 +8,17 @@ const http = require("http");
 const app = express();
 require("dotenv").config();
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
+
+const store = new MongoStore({
+	mongoUrl: process.env.MONGODB_URI,
+	dbName: process.env.DB_NAME,
+});
 
 const UserRoutes = require("./routes/UserRoutes");
 const ProductRoutes = require("./routes/ProductRoutes");
 const CartRoutes = require("./routes/CartRoutes");
+const WishlistRoutes = require("./routes/WishlistRoutes");
 const AuthRoutes = require("./routes/AuthRoutes");
 const FileRoutes = require("./routes/FileRoutes");
 const { authMiddleware } = require("./middleware/authMiddleware");
@@ -36,10 +43,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
 	session({
+		store: store, // Use MongoDB store for sessions
 		secret: process.env.SESSION_SECRET, // Replace with a secure key
 		resave: false, // Avoid resaving session if unmodified
 		saveUninitialized: false, // Avoid saving empty sessions
-		cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, // Use secure : true in https
+		cookie: {
+			secure: process.env.NODE_ENV === "production",
+			httpOnly: true,
+			maxAge: 24 * 60 * 60 * 1000,
+		}, // Use secure : true in https
 	})
 );
 
@@ -63,6 +75,7 @@ app.use("/api/auth", AuthRoutes);
 app.use("/api/user", authMiddleware, UserRoutes);
 app.use("/api/product", ProductRoutes);
 app.use("/api/cart", CartRoutes);
+app.use("/api/wishlist", WishlistRoutes);
 app.use("/file", FileRoutes);
 
 // 404 For Rest

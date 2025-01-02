@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Cart = require("../models/CartModel");
+const Wishlist = require("../models/WishlistModel");
 
 const userSchema = new mongoose.Schema(
 	{
@@ -30,6 +31,10 @@ const userSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Cart",
 		},
+		wishlist: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Wishlist",
+		},
 		role: {
 			type: String,
 			enum: ["customer", "admin"],
@@ -58,8 +63,21 @@ userSchema.pre("save", async function (next) {
 	if (this.cart) return next();
 
 	try {
-		const newCart = await Cart.create({ user: this._id });
+		const newCart = await Cart.create({ user: this._id, products: [] });
 		this.cart = newCart._id;
+		next();
+	} catch (error) {
+		return next(error);
+	}
+});
+
+// Pre-save hook to create a wishlist for the user if it doesn't exist
+userSchema.pre("save", async function (next) {
+	if (this.wishlist) return next();
+
+	try {
+		const newWishlist = await Wishlist.create({ user: this._id, products: [] });
+		this.cart = newWishlist._id;
 		next();
 	} catch (error) {
 		return next(error);

@@ -89,6 +89,7 @@ const addToCart = async (req, res) => {
 			}
 
 			await cart.save();
+			cart = await Cart.findById(req.user.cart).populate("products.product");
 			return res.status(200).json({ cart });
 		} else {
 			// For guests, use the session cart
@@ -96,7 +97,7 @@ const addToCart = async (req, res) => {
 
 			const existingProduct = cart.products.find(
 				(item) =>
-					item.product === productId &&
+					item.product._id === productId &&
 					JSON.stringify(item.variant) === JSON.stringify(variant)
 			);
 
@@ -109,7 +110,7 @@ const addToCart = async (req, res) => {
 				// If the product is new, add it to the session cart
 				totalPrice = quantity * price; // Calculate total price for new product
 				cart.products.push({
-					product: productId,
+					product: product,
 					quantity,
 					price: totalPrice,
 					variant,
@@ -187,6 +188,7 @@ const decreaseFromCart = async (req, res) => {
 			}
 
 			await cart.save();
+			cart = await Cart.findById(req.user.cart).populate("products.product");
 			return res.status(200).json({ cart });
 		} else {
 			// For guests, use the session cart
@@ -194,7 +196,7 @@ const decreaseFromCart = async (req, res) => {
 
 			const existingProduct = cart.products.find(
 				(item) =>
-					item.product === productId &&
+					item.product._id === productId &&
 					JSON.stringify(item.variant) === JSON.stringify(variant)
 			);
 
@@ -209,7 +211,7 @@ const decreaseFromCart = async (req, res) => {
 				// If the quantity becomes zero or less, remove the product from the cart
 				cart.products = cart.products.filter(
 					(item) =>
-						item.product !== productId ||
+						item.product._id !== productId ||
 						JSON.stringify(item.variant) !== JSON.stringify(variant)
 				);
 			} else {
@@ -249,6 +251,7 @@ const removeFromCart = async (req, res) => {
 			);
 
 			await cart.save();
+			cart = await Cart.findById(req.user.cart).populate("products.product");
 			return res.status(200).json({ cart });
 		} else {
 			// For guest users, remove the product from the session cart
@@ -257,7 +260,7 @@ const removeFromCart = async (req, res) => {
 			cart.products = cart.products.filter(
 				(item) =>
 					!(
-						item.product === productId &&
+						item.product._id === productId &&
 						JSON.stringify(item.variant) === JSON.stringify(variant)
 					)
 			);
@@ -291,8 +294,12 @@ const mergeCart = async (req, res, user) => {
 
 		// Loop through each product in the session cart
 		for (let sessionProduct of sessionCart.products) {
-			const { product: productId, quantity, variant } = sessionProduct;
-
+			const {
+				product: sessionProductDetail,
+				quantity,
+				variant,
+			} = sessionProduct;
+			const productId = sessionProductDetail._id;
 			// Get the product data (including price) from the database
 			const product = await Product.findById(productId);
 			if (!product) return;
