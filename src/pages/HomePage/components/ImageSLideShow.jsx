@@ -7,13 +7,13 @@ const ImageSlideShow = () => {
   const navigate = useNavigate();
 
   const leftImages = [
-    { src: "/assets/images/IMG_4977.JPG", caption: "SHOP NOW" },
+    { src: "/assets/images/IMG_4605.JPG", caption: "SHOP NOW" },
     { src: "/assets/images/IMG_4809.JPG", caption: "EXPLORE" },
     { src: "/assets/images/IMG_4977.JPG", caption: "DISCOVER" },
   ];
 
   const rightImages = [
-    { src: "/assets/images/IMG_5039.JPG", caption: "SHOP NOW" },
+    { src: "/assets/images/IMG_4605.JPG", caption: "SHOP NOW" },
     { src: "/assets/images/IMG_4849.JPG", caption: "EXPLORE" },
     { src: "/assets/images/IMG_5039.JPG", caption: "DISCOVER" },
   ];
@@ -40,7 +40,7 @@ const ImageSlideShow = () => {
         height: "60rem",
         overflow: "hidden",
         display: "flex",
-        marginTop: "6px",
+        // marginTop: "6px",
       }}
     >
       {/* Left Half */}

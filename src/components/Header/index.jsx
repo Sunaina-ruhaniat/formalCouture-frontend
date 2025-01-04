@@ -72,7 +72,7 @@ const Header = () => {
         >
           <Box
             component="img"
-            src={"/assets/images/logo1.png"}
+            src={"/assets/images/FC_logo.jpeg"}
             // src={"/assets/images/logo.png"}
             alt="Logo"
             sx={{
