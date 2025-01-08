@@ -31,57 +31,55 @@ const Header = () => {
           flexWrap: "wrap",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flex: 1,
-            maxWidth: "350px",
-            border: "1px solid #ccc",
-            borderRadius: "25px",
-            padding: "5px 15px",
-            marginTop: "2rem",
-            mb: { xs: 2, sm: 0 },
-          }}
-        >
-          <SearchIcon sx={{ color: "black", fontSize: "20px" }} />
-          <InputBase
-            placeholder="SEARCH FOR PRODUCTS"
+        {/* Logo and Search Bar on the Left */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          {/* Logo */}
+          <Box
+            component="img"
+            src={"/assets/images/FC BLUE.jpg"}
+            alt="Logo"
             sx={{
-              ml: 1,
-              flex: 1,
-              fontSize: "14px",
-              letterSpacing: "1px",
-              color: "black",
-              fontFamily:
-                '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+              height: "50px",
+              width: "50px",
             }}
           />
+          {/* Search Bar without rounded corners */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              padding: "5px 15px",
+              maxWidth: "18.5625rem",
+              marginTop: "15px",
+              backgroundColor: "#f8f8f8",
+            }}
+          >
+            <InputBase
+              placeholder="SEARCH FOR PRODUCTS"
+              sx={{
+                flex: 1,
+                fontSize: "13px",
+                letterSpacing: "0.10rem",
+                color: "black",
+                fontWeight: "lighter",
+                fontFamily:
+                  '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+              }}
+            />
+            <SearchIcon sx={{ color: "black", fontSize: "x-large" }} />
+          </Box>
         </Box>
 
+        {/* Centered Content (FORMAL COUTURE Text) */}
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
             textAlign: "center",
             flex: 1,
-            mb: { xs: 2, sm: 0 },
           }}
         >
-          <Box
-            component="img"
-            src={"/assets/images/FC_logo.jpeg"}
-            // src={"/assets/images/logo.png"}
-            alt="Logo"
-            sx={{
-              height: "50px",
-              width: "80px",
-              mb: 0.4,
-              mr: 16,
-            }}
-          />
           <Link
             to="/home"
             style={{
@@ -92,11 +90,8 @@ const Header = () => {
             <Typography
               sx={{
                 fontSize: "30px",
-                mr: 16,
-                letterSpacing: "4px",
-                color: "#2f2f2f",
-                fontFamily:
-                  '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+                color: "#050D52",
+                fontFamily: "Prachason neue",
               }}
             >
               FORMAL COUTURE
@@ -104,15 +99,15 @@ const Header = () => {
           </Link>
         </Box>
 
+        {/* Icons Section (Right side - Sign in, Wishlist, Shopping Bag) */}
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            marginTop: "1rem",
             gap: "20px",
-            mb: { xs: 2, sm: 0 },
           }}
         >
+          {/* Sign-in Icon */}
           <Box sx={{ textAlign: "center" }}>
             <Link to="/sign-up">
               <IconButton>
@@ -123,16 +118,18 @@ const Header = () => {
               sx={{
                 fontSize: "12px",
                 fontWeight: 400,
-                color: "black",
                 letterSpacing: "0.10rem",
+                color: "#050D52",
                 fontFamily:
                   '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+                // fontFamily: "Prachason neue",
               }}
             >
               Sign in
             </Typography>
           </Box>
 
+          {/* Wishlist Icon */}
           <Box sx={{ textAlign: "center" }}>
             <IconButton>
               <img src="/assets/icons/love.png" alt="Wishlist" width={28} />
@@ -141,16 +138,18 @@ const Header = () => {
               sx={{
                 fontSize: "12px",
                 fontWeight: 400,
-                color: "black",
                 letterSpacing: "0.10rem",
+                color: "#050D52",
                 fontFamily:
                   '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+                // fontFamily: "Prachason neue",
               }}
             >
               Wishlist
             </Typography>
           </Box>
 
+          {/* Shopping Bag Icon */}
           <Box sx={{ textAlign: "center" }}>
             <IconButton>
               <Badge badgeContent={cartItemCount} color="primary">
@@ -165,10 +164,11 @@ const Header = () => {
               sx={{
                 fontSize: "12px",
                 fontWeight: 400,
-                color: "black",
                 letterSpacing: "0.10rem",
+                color: "#050D52",
                 fontFamily:
                   '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+                // fontFamily: "Prachason neue",
               }}
             >
               Shopping bag

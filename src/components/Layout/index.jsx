@@ -1,16 +1,17 @@
 import React from "react";
-import { Box, Typography, Link } from "@mui/material";
+import { Box, Typography, Link, Divider } from "@mui/material";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import { Outlet } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom"; // Ensure this is imported for correct routing
+import Home from "pages/HomePage";
 
 const Layout = () => {
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <Box
         sx={{
-          backgroundColor: "#afa4a5",
+          backgroundColor: "#f3f3f3",
           height: "30px",
         }}
       />
@@ -20,12 +21,13 @@ const Layout = () => {
       </header>
       <Box
         sx={{
-          backgroundColor: "#f0c14b",
-          padding: "10px",
+          backgroundColor: "#f8f8f8",
+          padding: "15px",
           textAlign: "center",
+          borderTop: "none",
         }}
       >
-        <Link
+        {/* <Link
           component={RouterLink} // Use RouterLink to properly route
           to="/sign-up"
           style={{
@@ -38,8 +40,22 @@ const Layout = () => {
           <Typography variant="body2">
             SIGN UP FOR 10% OFF YOUR FIRST ORDER*
           </Typography>
-        </Link>
+        </Link> */}
       </Box>
+      <Divider
+        sx={{
+          backgroundColor: "#d7d7d7",
+        }}
+      ></Divider>
+      <Box
+        sx={{
+          backgroundColor: "#f0c14b",
+          // backgroundColor: "#f3f3f3",
+          padding: "15px",
+          textAlign: "center",
+          borderTop: "none",
+        }}
+      ></Box>
       <main
         style={{
           minHeight: "80vh",

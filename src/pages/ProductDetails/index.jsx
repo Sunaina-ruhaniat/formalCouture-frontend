@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { ArrowForward, ArrowBack } from "@mui/icons-material";
 import ProductDetails from "./components/Details";
+import productStore from "stores/productStore";
 
 const ProductPage = () => {
   const [currentImage, setCurrentImage] = useState(0); // Spotlighted image
@@ -48,6 +49,11 @@ const ProductPage = () => {
       const scrollAmount = event.deltaY;
       thumbnailContainerRef.current.scrollTop += scrollAmount; // Scroll thumbnails vertically
     }
+  };
+
+  const fetchProductDetails = (productId) => {
+    const result = productStore.getProductById(productId);
+    console.log("result", result);
   };
 
   return (
