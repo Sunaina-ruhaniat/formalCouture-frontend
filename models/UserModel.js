@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			unique: true,
 		},
+		phone: {
+			type: String,
+			required: false,
+		},
 		password: {
 			type: String,
 			required: true,
@@ -39,6 +43,10 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			enum: ["customer", "admin"],
 			default: "customer",
+		},
+		wallet: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Wallet",
 		},
 	},
 	{
@@ -78,6 +86,19 @@ userSchema.pre("save", async function (next) {
 	try {
 		const newWishlist = await Wishlist.create({ user: this._id, products: [] });
 		this.cart = newWishlist._id;
+		next();
+	} catch (error) {
+		return next(error);
+	}
+});
+
+// Pre-save hook to create a wallet for the user if it doesn't exist
+userSchema.pre("save", async function (next) {
+	if (this.wallet) return next();
+
+	try {
+		const newWallet = await Wallet.create({ user: this._id });
+		this.wallet = newWallet._id;
 		next();
 	} catch (error) {
 		return next(error);

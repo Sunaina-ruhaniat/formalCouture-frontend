@@ -21,6 +21,8 @@ const CartRoutes = require("./routes/CartRoutes");
 const WishlistRoutes = require("./routes/WishlistRoutes");
 const AuthRoutes = require("./routes/AuthRoutes");
 const FileRoutes = require("./routes/FileRoutes");
+const WalletRoutes = require("./routes/WalletRoutes");
+const ReferralRoutes = require("./routes/ReferralRoutes");
 const { authMiddleware } = require("./middleware/authMiddleware");
 
 app.use(cookieParser());
@@ -76,7 +78,9 @@ app.use("/api/user", authMiddleware, UserRoutes);
 app.use("/api/product", ProductRoutes);
 app.use("/api/cart", CartRoutes);
 app.use("/api/wishlist", WishlistRoutes);
+app.use("/api/wallet", WalletRoutes);
 app.use("/file", FileRoutes);
+app.use("/referral", ReferralRoutes);
 
 // 404 For Rest
 app.all("*", (req, res, next) => {

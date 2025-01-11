@@ -28,6 +28,12 @@ exports.createProduct = async (req, res) => {
 				imageUrls.push(fileUrl);
 			}
 		}
+
+		// Convert comma-separated strings to arrays
+		// const sizesArray = sizes ? sizes.split(',').map((s) => s.trim()) : [];
+		// const colorsArray = colors ? colors.split(',').map((c) => c.trim()) : [];
+		// const fitsArray = fits ? fits.split(',').map((f) => f.trim()) : [];
+
 		const product = await Product.create({
 			productCode,
 			name,
@@ -39,6 +45,9 @@ exports.createProduct = async (req, res) => {
 			sizes: JSON.parse(sizes || "[]"), // Convert sizes string to array
 			colors: JSON.parse(colors || "[]"), // Convert colors string to array
 			fits: JSON.parse(fits || "[]"), // Convert sizes string to array
+			// sizes: sizesArray,
+			// colors: colorsArray,
+			// fits: fitsArray,
 			images: imageUrls,
 		});
 
@@ -151,6 +160,16 @@ exports.updateProduct = async (req, res) => {
 				imageUrls.push(fileUrl);
 			}
 		}
+		// Convert comma-separated strings to arrays
+		// const sizesArray = sizes
+		// 	? sizes.split(",").map((s) => s.trim())
+		// 	: product.sizes;
+		// const colorsArray = colors
+		// 	? colors.split(",").map((c) => c.trim())
+		// 	: product.colors;
+		// const fitsArray = fits
+		// 	? fits.split(",").map((f) => f.trim())
+		// 	: product.fits;
 
 		product.name = name || product.name;
 		product.description = description || product.description;
@@ -161,6 +180,9 @@ exports.updateProduct = async (req, res) => {
 		product.sizes = JSON.parse(sizes || "[]") || product.sizes;
 		product.colors = JSON.parse(colors || "[]") || product.colors;
 		product.fits = JSON.parse(fits || "[]") || product.fits;
+		// product.sizes = sizesArray;
+		// product.colors = colorsArray;
+		// product.fits = fitsArray;
 		product.images = imageUrls;
 
 		await product.save();
