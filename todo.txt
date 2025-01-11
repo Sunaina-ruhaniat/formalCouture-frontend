@@ -1,0 +1,7 @@
+# things to change
+# PAYMENT_CALLBACK_URL
+# RAZORPAY_WEBHOOK_URL with payment.captured or payment.failed
+# Webhook secret
+
+referral amounts added to wallet
+referral percentage per order

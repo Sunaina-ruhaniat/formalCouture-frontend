@@ -23,6 +23,7 @@ const AuthRoutes = require("./routes/AuthRoutes");
 const FileRoutes = require("./routes/FileRoutes");
 const WalletRoutes = require("./routes/WalletRoutes");
 const ReferralRoutes = require("./routes/ReferralRoutes");
+const OrderRoutes = require("./routes/OrderRoutes");
 const { authMiddleware } = require("./middleware/authMiddleware");
 
 app.use(cookieParser());
@@ -79,6 +80,7 @@ app.use("/api/product", ProductRoutes);
 app.use("/api/cart", CartRoutes);
 app.use("/api/wishlist", WishlistRoutes);
 app.use("/api/wallet", WalletRoutes);
+app.use("/api/order", OrderRoutes);
 app.use("/file", FileRoutes);
 app.use("/referral", ReferralRoutes);
 
