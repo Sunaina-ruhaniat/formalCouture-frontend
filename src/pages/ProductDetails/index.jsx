@@ -16,10 +16,13 @@ import {
 } from "@mui/material";
 import { ArrowForward, ArrowBack } from "@mui/icons-material";
 import ProductDetails from "./components/Details";
-import productStore from "stores/productStore";
+import cartStore from "stores/cartStore"; // Import CartStore
 
 const ProductPage = () => {
-  const [currentImage, setCurrentImage] = useState(0); // Spotlighted image
+  const [currentImage, setCurrentImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [size, setSize] = useState("S");
+  const [color, setColor] = useState("Light Blue");
   const thumbnailContainerRef = useRef(null);
 
   const images = [
@@ -33,7 +36,7 @@ const ProductPage = () => {
   ];
 
   const handleThumbnailClick = (index) => {
-    setCurrentImage(index); // Update the spotlighted image
+    setCurrentImage(index);
   };
 
   const handleNextImage = () => {
@@ -47,22 +50,22 @@ const ProductPage = () => {
   const handleThumbnailScroll = (event) => {
     if (thumbnailContainerRef.current) {
       const scrollAmount = event.deltaY;
-      thumbnailContainerRef.current.scrollTop += scrollAmount; // Scroll thumbnails vertically
+      thumbnailContainerRef.current.scrollTop += scrollAmount;
     }
   };
 
-  const fetchProductDetails = (productId) => {
-    const result = productStore.getProductById(productId);
-    console.log("result", result);
+  const handleAddToCart = () => {
+    const variant = { size, color, fit: "Slim" };
+    cartStore.addToCart("677936f61f04a52e960a36d6", quantity, variant);
+  };
+
+  const handleAddToWishlist = () => {
+    const variant = { size, color, fit: "Slim" };
+    cartStore.addToWishlist("677551a183120f71bc1ff937", variant);
   };
 
   return (
-    <div
-      style={{
-        marginTop: 20,
-        marginLeft: -2,
-      }}
-    >
+    <div style={{ marginTop: 20, marginLeft: -2 }}>
       <Breadcrumbs
         separator="/"
         aria-label="breadcrumb"
@@ -85,14 +88,12 @@ const ProductPage = () => {
           PRODUCTS
         </Link>
         <Typography sx={{ color: "#000", fontWeight: "500" }}>
-          Products Details
+          Product Details
         </Typography>
       </Breadcrumbs>
 
       <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: 2 }}>
-        {/* Main Content */}
         <Grid container spacing={4}>
-          {/* Image Section */}
           <Grid
             item
             xs={12}
@@ -100,10 +101,9 @@ const ProductPage = () => {
             sx={{
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              alignItems: "stretch", // Ensures the height of the text and image sections match
+              alignItems: "stretch",
             }}
           >
-            {/* Thumbnails */}
             <Box
               ref={thumbnailContainerRef}
               onWheel={handleThumbnailScroll}
@@ -135,7 +135,6 @@ const ProductPage = () => {
               ))}
             </Box>
 
-            {/* Spotlight Image with Navigation Arrows */}
             <Box
               sx={{
                 position: "relative",
@@ -147,38 +146,30 @@ const ProductPage = () => {
                 mb: { xs: 2, md: 0 },
               }}
             >
-              {/* Big Image */}
               <img
                 src={images[currentImage]}
                 alt="Product"
-                style={{
-                  width: "100%",
-                  // maxWidth: "380px",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </Box>
 
-            {/* Right Arrow */}
             <IconButton
               onClick={handleNextImage}
               sx={{
                 position: "absolute",
                 top: "50%",
-                left: "calc(100% - 40px)", // Adjusted to position the arrow at the right edge
+                left: "calc(100% - 40px)",
                 transform: "translateY(-50%)",
-                backgroundColor: "white", // White background for arrow button
+                backgroundColor: "white",
                 color: "black",
-                borderRadius: "50%", // Circle shape for the icon button
-                "&:hover": { backgroundColor: "#f0f0f0" }, // Light hover effect
+                borderRadius: "50%",
+                "&:hover": { backgroundColor: "#f0f0f0" },
               }}
             >
               <ArrowForward />
             </IconButton>
           </Grid>
 
-          {/* Product Details Section */}
           <Grid
             item
             xs={12}
@@ -204,7 +195,6 @@ const ProductPage = () => {
                 $80.00
               </Typography>
 
-              {/* Color Options */}
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
                 Color
               </Typography>
@@ -229,33 +219,24 @@ const ProductPage = () => {
                 ></Box>
               </Box>
 
-              {/* Size Dropdown */}
               <FormControl fullWidth sx={{ mb: 3, borderColor: "#b8aaad" }}>
                 <InputLabel>Size</InputLabel>
-                <Select>
-                  <MenuItem value="small">Small</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="large">Large</MenuItem>
+                <Select value={size} onChange={(e) => setSize(e.target.value)}>
+                  <MenuItem value="S">Small</MenuItem>
+                  <MenuItem value="M">Medium</MenuItem>
+                  <MenuItem value="L">Large</MenuItem>
                 </Select>
               </FormControl>
 
-              {/* Quantity Selector */}
               <TextField
                 type="number"
                 label="Quantity"
                 defaultValue={1}
                 InputProps={{ inputProps: { min: 1 } }}
                 sx={{ width: "100px", mb: 3, borderColor: "#b8aaad" }}
+                onChange={(e) => setQuantity(e.target.value)}
               />
 
-              {/* Add to Cart Button */}
-              {/* <Button
-                variant="contained"
-                fullWidth
-                sx={{ py: 1.5, backgroundColor: "black", color: "white" }}
-              >
-                Add to Cart
-              </Button> */}
               <Button
                 variant="contained"
                 fullWidth
@@ -265,52 +246,31 @@ const ProductPage = () => {
                   fontSize: "18px",
                   padding: "25px 60px",
                   backgroundColor: "#b8aaad",
-                  borderRadius: 0, // Remove border radius
-                  "&:hover": {
-                    backgroundColor: "#ffffff",
-                    color: "#333333", // Change color on hover
-                  },
-                  fontFamily:
-                    "'Proxima Nova', 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.40rem",
-                  lineHeight: "1rem",
-                  color: "#ffffff", // Default text color
-                  fontWeight: "600",
+                  borderRadius: 0,
+                  "&:hover": { backgroundColor: "#ffffff", color: "#333333" },
                 }}
-                // onClick={() => navigate("/product-list")}
+                onClick={handleAddToCart}
               >
                 ADD TO CART
               </Button>
+
+              <Button
+                variant="outlined"
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={handleAddToWishlist}
+              >
+                ADD TO WISHLIST
+              </Button>
             </Box>
 
-            {/* Product Info */}
             <Box sx={{ mt: 4 }}>
               <Typography variant="h6" gutterBottom>
                 Product Info
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                I'm a product detail. I'm a great place to add more information
-                about your product such as sizing, material, care and cleaning
-                instructions. This is also a great space to write what makes
-                this product special and how your customers can benefit from
-                this item.
-              </Typography>
-            </Box>
-
-            {/* Return & Refund Policy */}
-            <Box sx={{ mt: 4 }}>
-              <Divider />
-              <Typography variant="h6" sx={{ mt: 2 }}>
-                Return & Refund Policy
-              </Typography>
-            </Box>
-
-            {/* Shipping Info */}
-            <Box sx={{ mt: 4 }}>
-              <Divider />
-              <Typography variant="h6" sx={{ mt: 2 }}>
-                Shipping Info
+                I'm a product detail. This is a great place to add more
+                information about your product.
               </Typography>
             </Box>
           </Grid>

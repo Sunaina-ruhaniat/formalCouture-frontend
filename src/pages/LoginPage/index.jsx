@@ -1,99 +1,128 @@
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+  Link,
+  Box,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Field, Formik } from "formik";
-import * as Yup from "yup";
-
-import { FormInput } from "components/Input";
-import Button from "components/Button";
-import Image from "components/Image";
-import getStyles from "./styles";
-import LogoDarkIcon from "assets/svg/LogoDarkIcon.svg";
-import { Box, Typography } from "@mui/material";
-import LogoutIcon from "@mui/icons-material/Logout";
-
+import toast from "react-hot-toast"; // For toast notifications
 import authStore from "stores/authStore";
 
-const schema = Yup.object().shape({
-  email: Yup.string().required("Email is required field"),
-  password: Yup.string().required("Password is required field"),
-  // .min(8, "Password needs to contain at least 8 characters "),
-});
-
 const LoginPage = () => {
-  const classes = getStyles();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({});
 
-  const { login } = authStore;
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Valid email is required.";
+    if (!formData.password.trim() || formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-  const onSubmit = (values, { resetForm }) => {
-    login({ payload: values, navigate: navigate, resetForm: resetForm });
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (validateForm()) {
+      try {
+        await authStore.login({
+          payload: formData,
+          navigate,
+        });
+      } catch (error) {
+        toast.error("Login failed. Please try again.");
+      }
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   return (
-    <Box sx={classes.wrapper}>
-      <Box sx={classes.firstColumn}>
-        <Typography variant="h6">
-          Spend less time <br /> on the roads
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      height="100vh"
+      bgcolor="#f9f9f9"
+    >
+      <Box
+        width={300}
+        p={3}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        boxShadow={3}
+        borderRadius={2}
+        bgcolor="white"
+      >
+        <Typography variant="h5" gutterBottom>
+          Sign in
         </Typography>
-      </Box>
-      <Box sx={classes.secondColumn}>
-        <Formik
-          initialValues={{
-            email: "",
-            password: "",
-          }}
-          onSubmit={onSubmit}
-          validationSchema={schema}
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="E-mail"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            variant="outlined"
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            error={!!errors.password}
+            helperText={errors.password}
+            variant="outlined"
+            InputProps={{
+              endAdornment: <Button sx={{ minWidth: "auto" }}>👁️</Button>,
+            }}
+          />
+          <FormControlLabel
+            control={<Checkbox defaultChecked />}
+            label="Stay signed in"
+            sx={{ alignSelf: "flex-start", mt: 1 }}
+          />
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ bgcolor: "black", color: "white", mt: 2 }}
+            type="submit"
+          >
+            Sign in
+          </Button>
+        </form>
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={{ mt: 2 }}
+          onClick={() => navigate("/sign-up")} // Navigate to /sign-up
         >
-          {({ errors, handleSubmit }) => {
-            return (
-              <form onSubmit={handleSubmit} style={classes.form}>
-                <Box sx={classes.header}>
-                  <Box sx={classes.logoTitle}>
-                    <Image
-                      width={96}
-                      height={82}
-                      src={LogoDarkIcon}
-                      alt="Logo"
-                    />
-                    <Typography>VisionFlow</Typography>
-                  </Box>
-                  <Typography variant="h5">Login</Typography>
-                </Box>
-                <Box sx={classes.content}>
-                  <Field
-                    sx={classes.inputField}
-                    component={FormInput}
-                    InputLabelProps={{ shrink: true }}
-                    placeholder="name@itc.com"
-                    name="email"
-                    helperText={errors.email}
-                    topLabel="Email"
-                    error={!!errors.email}
-                  />
-                  <Field
-                    sx={classes.inputField}
-                    component={FormInput}
-                    InputLabelProps={{ shrink: true }}
-                    placeholder="minimum 8 characters"
-                    name="password"
-                    helperText={errors.password}
-                    topLabel="Password"
-                    error={!!errors.password}
-                    isPassword
-                  />
-                  <Button
-                    startIcon={
-                      <LogoutIcon sx={{ width: "16px", height: "16px" }} />
-                    }
-                    type="submit"
-                  >
-                    <Typography>Login</Typography>
-                  </Button>
-                </Box>
-              </form>
-            );
-          }}
-        </Formik>
+          Create account
+        </Button>
+        <Link href="#" sx={{ mt: 2, color: "gray", fontSize: "0.9rem" }}>
+          Forgotten your password?
+        </Link>
       </Box>
     </Box>
   );

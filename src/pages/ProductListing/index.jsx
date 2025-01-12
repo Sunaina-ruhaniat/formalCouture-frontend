@@ -14,7 +14,7 @@ const ProductListing = observer(() => {
 
   useEffect(() => {
     getProductList(); // Fetch product list when the component mounts
-  }, [getProductList]);
+  }, []);
 
   return (
     <>
@@ -49,10 +49,6 @@ const ProductListing = observer(() => {
                       image={`${BASE_URL}${product.images[0]}`} // Prepend base URL to the image path
                       alt={product.name}
                       className="primary-image"
-                      onError={(e) => {
-                        e.target.onerror = null; // Prevent infinite loop in case of error
-                        e.target.src = "/assets/default-image.jpg"; // Fallback image
-                      }}
                     />
                     <div className="hover-text">
                       <Typography variant="body1">Quick View</Typography>

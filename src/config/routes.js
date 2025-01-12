@@ -3,6 +3,9 @@ export const privatePaths = {
   admin: {
     page: "/main-page",
   },
+  customer: {
+    profile: "/profile",
+  },
 };
 
 export const publicPaths = {

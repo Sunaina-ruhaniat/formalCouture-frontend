@@ -1,97 +1,73 @@
 import { makeObservable, observable, action, runInAction } from "mobx";
 import axios from "config/axios";
-import { privatePaths } from "config/routes";
 import toast from "react-hot-toast";
 
 class AuthStore {
   user = {};
   isLoadingUser = false;
+  isLoadingLogin = false;
 
   constructor() {
     makeObservable(this, {
       user: observable.ref,
       isLoadingUser: observable.ref,
+      isLoadingLogin: observable.ref,
       login: action,
-      getUser: action,
       logout: action,
     });
   }
 
-  login = ({ payload, navigate, resetForm }) => {
+  login = async ({ payload, navigate }) => {
     runInAction(() => {
       this.isLoadingLogin = true;
     });
-    console.log("payload", payload);
-    axios
-      .post("/auth/login", payload, { withCredentials: true })
-      .then((res) => {
-        if (res.status === 400) {
-          resetForm();
-          toast.error("Wrong Username or Password");
-        } else if (res.status === 200) {
-          const data = res.data;
-          if (data.success) {
-            localStorage.setItem("userClass", data?.user.groups[0]);
-            const role = data.user.groups.includes("Admin Users")
-              ? "admin"
-              : "user";
-            localStorage.setItem("role", "admin");
-            localStorage.setItem("user", JSON.stringify(data.user));
-            navigate &&
-              navigate(
-                privatePaths["admin"][Object.keys(privatePaths["admin"])[0]],
-                {
-                  replace: true,
-                }
-              );
-            window.location.reload();
-          }
-        }
-
-        runInAction(() => {
-          this.isLoadingLogin = false;
-        });
-      })
-      .catch((error) => {
-        toast.error("Wrong Username or Password");
-        runInAction(() => {
-          this.isLoadingLogin = false;
-        });
+    try {
+      const res = await axios.post("/auth/login", payload, {
+        withCredentials: true,
       });
+      if (res.status === 200) {
+        const data = res?.data;
+        localStorage.setItem("userId", data?.user?._id);
+        localStorage.setItem("role", data?.user?.role);
+        localStorage.setItem("isLoggedIn", true);
+        toast.success("Login successful!");
+        navigate && navigate("/home");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+    }
   };
 
-  getUser = () => {
-    runInAction(() => {
-      this.isLoadingUser = true;
-    });
-    // Assuming your CSRF token is available in a cookie
-    const csrfToken = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
-
-    axios.defaults.headers.common["X-CSRFToken"] = csrfToken;
-    axios
-      .get("/auth/me", { withCredentials: true })
-      .then(({ data }) => {
-        runInAction(() => {
-          const className = data?.groups[0]?.split(" ")[1];
-          if (className) {
-            localStorage.setItem("userClass", className);
-          }
-          this.user = data;
-          this.isLoadingUser = false;
-        });
-      })
-      .catch((error) => {
-        runInAction(() => {
-          this.isLoadingUser = false;
-        });
+  register = async ({ payload, navigate }) => {
+    try {
+      const response = await axios.post("/auth/register", payload, {
+        withCredentials: true,
       });
+      if (response.status === 200) {
+        console.log("response", response);
+        toast.success("Registration successful!");
+        localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("userId", response?.data?.user?._id);
+        localStorage.setItem("role", response?.data?.user?.role);
+        navigate && navigate("/home");
+      } else {
+        toast.error("Registration failed: Unexpected response status");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Something went wrong during registration";
+      toast.error(errorMessage);
+    }
   };
 
   logout = ({ callback }) => {
     runInAction(() => {
       localStorage.clear();
       this.user = {};
-      axios.get("/auth/logout").then((r) => {});
+      axios.get("/auth/logout").then(() => {});
       callback && callback();
     });
   };

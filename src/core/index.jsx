@@ -13,6 +13,7 @@ const LoginPage = lazy(() => import("pages/LoginPage"));
 const HomePage = lazy(() => import("pages/HomePage"));
 const ProductListPage = lazy(() => import("pages/ProductListing"));
 const ProductDetailPage = lazy(() => import("pages/ProductDetails"));
+const ProfilePage = lazy(() => import("pages/ProfilePage"));
 
 const publicRoutes = [
   {
@@ -37,10 +38,15 @@ const publicRoutes = [
   },
 ];
 
-const privateRoutes = [];
+const privateRoutes = [
+  {
+    path: privatePaths.customer.profile,
+    Component: <ProfilePage />,
+  },
+];
 
 const App = () => {
-  const isAuthenticated = localStorage.getItem("authToken");
+  const isAuthenticated = localStorage.getItem("userId");
 
   return (
     <Suspense fallback={<LinearProgress />}>

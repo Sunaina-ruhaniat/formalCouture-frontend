@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   const [cartItemCount, setCartItemCount] = useState(2);
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
 
   return (
     <AppBar
@@ -107,27 +108,47 @@ const Header = () => {
             gap: "20px",
           }}
         >
-          {/* Sign-in Icon */}
-          <Box sx={{ textAlign: "center" }}>
-            <Link to="/sign-up">
-              <IconButton>
-                <img src="/assets/icons/user.png" alt="User" width={28} />
-              </IconButton>
-            </Link>
-            <Typography
-              sx={{
-                fontSize: "12px",
-                fontWeight: 400,
-                letterSpacing: "0.10rem",
-                color: "#050D52",
-                fontFamily:
-                  '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
-                // fontFamily: "Prachason neue",
-              }}
-            >
-              Sign in
-            </Typography>
-          </Box>
+          {isLoggedIn ? (
+            <Box sx={{ textAlign: "center" }}>
+              <Link to="/profile">
+                <IconButton>
+                  <img src="/assets/icons/user.png" alt="Profile" width={28} />
+                </IconButton>
+              </Link>
+              <Typography
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 400,
+                  letterSpacing: "0.10rem",
+                  color: "#050D52",
+                  fontFamily:
+                    '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+                }}
+              >
+                Profile
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ textAlign: "center" }}>
+              <Link to="/sign-up">
+                <IconButton>
+                  <img src="/assets/icons/user.png" alt="User" width={28} />
+                </IconButton>
+              </Link>
+              <Typography
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 400,
+                  letterSpacing: "0.10rem",
+                  color: "#050D52",
+                  fontFamily:
+                    '"Proxima Nova", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif',
+                }}
+              >
+                Sign in
+              </Typography>
+            </Box>
+          )}
 
           {/* Wishlist Icon */}
           <Box sx={{ textAlign: "center" }}>
