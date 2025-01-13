@@ -13,16 +13,21 @@ import {
   Divider,
   Breadcrumbs,
   Link,
+  Snackbar,
 } from "@mui/material";
-import { ArrowForward, ArrowBack } from "@mui/icons-material";
+import { ArrowForward, ArrowBack, ContentCopy } from "@mui/icons-material";
 import ProductDetails from "./components/Details";
 import cartStore from "stores/cartStore"; // Import CartStore
+import referralCodeStore from "stores/referralCodeStore";
 
 const ProductPage = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState("S");
   const [color, setColor] = useState("Light Blue");
+  const [referralCode, setReferralCode] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const thumbnailContainerRef = useRef(null);
 
   const images = [
@@ -62,6 +67,27 @@ const ProductPage = () => {
   const handleAddToWishlist = () => {
     const variant = { size, color, fit: "Slim" };
     cartStore.addToWishlist("677551a183120f71bc1ff937", variant);
+  };
+
+  const generateReferralCode = () => {
+    referralCodeStore
+      .generateReferralCode("K001") // Assuming K001 is the product ID
+      .then((code) => {
+        console.log("Generated Referral Code:", code);
+        setReferralCode(code);
+        setSnackbarMessage("Referral Code Generated!");
+        setOpenSnackbar(true);
+      })
+      .catch(() => {
+        setSnackbarMessage("Failed to generate referral code.");
+        setOpenSnackbar(true);
+      });
+  };
+
+  const copyReferralCode = () => {
+    navigator.clipboard.writeText(referralCode);
+    setSnackbarMessage("Referral Code Copied!");
+    setOpenSnackbar(true);
   };
 
   return (
@@ -264,19 +290,43 @@ const ProductPage = () => {
               </Button>
             </Box>
 
+            {/* Referral Code Generation Section */}
             <Box sx={{ mt: 4 }}>
               <Typography variant="h6" gutterBottom>
-                Product Info
+                Generate Referral Code
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                I'm a product detail. This is a great place to add more
-                information about your product.
-              </Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={generateReferralCode}
+                sx={{ mb: 2 }}
+              >
+                Generate Code
+              </Button>
+
+              {referralCode && (
+                <Box>
+                  <Typography variant="body1">
+                    Your Referral Code: <strong>{referralCode}</strong>
+                  </Typography>
+                  <IconButton onClick={copyReferralCode}>
+                    <ContentCopy />
+                  </IconButton>
+                </Box>
+              )}
             </Box>
           </Grid>
         </Grid>
       </Box>
       <ProductDetails />
+
+      {/* Snackbar for success/failure */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+        message={snackbarMessage}
+      />
     </div>
   );
 };
