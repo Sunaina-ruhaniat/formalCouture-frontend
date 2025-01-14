@@ -25,6 +25,7 @@ const SignUpPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -59,6 +60,10 @@ const SignUpPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <Box
       display="flex"
@@ -69,7 +74,7 @@ const SignUpPage = () => {
       bgcolor="#f9f9f9"
     >
       <Box
-        width={300}
+        width={500}
         p={3}
         display="flex"
         flexDirection="column"
@@ -98,7 +103,7 @@ const SignUpPage = () => {
             margin="normal"
             label="Password"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={formData.password}
             onChange={handleInputChange}
             error={!!errors.password}
@@ -107,7 +112,12 @@ const SignUpPage = () => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <Button sx={{ minWidth: "auto" }}>👁️</Button>
+                  <Button
+                    sx={{ minWidth: "auto" }}
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </Button>
                 </InputAdornment>
               ),
             }}
